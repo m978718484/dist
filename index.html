@@ -1,50 +1,62 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1">
-<title>钜商网</title>
+<head lang="en">
+<meta charset="UTF-8">
+<title></title>
+<meta name="viewport" content="user-scalable=no , width=device-width , initial-scale=1 , maximum-scale=1">
+<script type="text/javascript" src="./static/js/hammer.min.js"></script>
+<style>
+body{padding:0; overflow:hidden;}
+#pinchzoom{overflow:hidden; width:300px; height:300px; background-color:#eee;}
+</style>
 </head>
 <body>
-<div>
-	<img src="/dist/static/image/purpose.png" id="myImage">
+<div id="pinchzoom">
+    <img id="img" src="http://pr.bdimg.com/static/princess/img/misc/baidu_logo_c352a179.gif" ondragstart="return false" alt="" />
 </div>
-<script type=text/javascript src=/dist/static/js/hammer.min.js></script>
-<script type="text/javascript">
-	var log = null;
-    var el=document.querySelector("#myImage");//获取你想要放大的图片<img>标签id
-	//var START_X = Math.round((window.innerWidth - el.offsetWidth) / 2);//居中
-   // var  START_Y = Math.round((window.innerHeight - el.offsetHeight) / 2);
-	var START_X =0;//后来发现，出现位置设为0才居中
-	var  START_Y=0;
-    var ticking = false;
-    var transform;
-    var timer;
-    var mc = new Hammer.Manager(el);
+<script>
+var hammertime = Hammer(document.getElementById('pinchzoom'),{
+    transform_always_block:true,
+    transform_min_scale:0.5,
+    drag_block_horizontal:true,
+    drag_block_vertical:true,
+    drag_min_distance:0
+});
 
-    mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
+var img = document.getElementById('img');
+//初始值
+var posX = 0,
+    posY = 0,
+    last_posX,
+    last_posY,
+    scale = 1,
+    last_scale,
+    rotation = 0,
+    last_rotation;
 
-    mc.add(new Hammer.Swipe()).recognizeWith(mc.get('pan'));
-    mc.add(new Hammer.Rotate({ threshold: 0 })).recognizeWith(mc.get('pan'));
-    mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan'), mc.get('rotate')]);
-
-    mc.add(new Hammer.Tap({ event: 'doubletap', taps: 2 }));
-    mc.add(new Hammer.Tap());
-
-    mc.on("panstart panmove", onPan);//拖动事件
-   // mc.on("rotatestart rotatemove", onRotate);//旋转事件
-    mc.on("pinchstart pinchmove", onPinch);//放大缩小事件
-    mc.on("swipe", onSwipe);
-    mc.on("tap", onTap);//单击
-    mc.on("doubletap", onDoubleTap);//双击
-
-    mc.on("hammer.input", function(ev) {
-        if(ev.isFinal) {//判断是否离开，或者事件结束
-            //resetElement();//�1�7�0�8�1�7
-        	START_X=transform.translate.x;//把当前拖动到的坐标赋值给中间变量
-		    START_Y=transform.translate.y;
-        }
-    });
+hammertime.on('touch drag transform',function(e){
+    switch(e.type){
+        //当touch开始时，记录下当前的缩放量，旋转量和位移量
+        case 'touch':
+            last_scale = scale;
+            last_rotation = rotation;
+            last_posX = posX;
+            last_posY = posY;
+            break;
+        //拖拽时改变位移量
+        case 'drag':
+            posX = last_posX + e.gesture.deltaX;
+            posY = last_posY + e.gesture.deltaY;
+            break;
+        case 'transform':
+            rotation = last_rotation + e.gesture.rotation;
+            scale = Math.min(last_scale* e.gesture.scale,10);
+            break;
+    }
+    //使用CSS3 transform进行图片的变换
+    var transform = "translate3d("+posX+"px,"+posY+"px,0)"+"scale3d("+scale+","+scale+",1)"+"rotate("+rotation+"deg)";
+    img.style.webkitTransform = transform;
+})
 </script>
 </body>
 </html>
