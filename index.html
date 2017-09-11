@@ -1,1 +1,50 @@
-<!DOCTYPE html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1"><title>钜商网</title><link href=/dist/static/css/app.ed4b885215b85ac030ccb8b8786b58de.css rel=stylesheet></head><body><div id=app></div><script type=text/javascript src=/dist/static/js/manifest.b3ec568768db1296395a.js></script><script type=text/javascript src=/dist/static/js/vendor.5c4e74e4620c18b5b8cd.js></script><script type=text/javascript src=/dist/static/js/app.c7cd758c05ea9edf769d.js></script></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1">
+<title>钜商网</title>
+</head>
+<body>
+<div>
+	<img src="/dist/static/image/purpose.png" id="myImage">
+</div>
+<script type=text/javascript src=/dist/static/js/hammer.min.js></script>
+<script type="text/javascript">
+	var log = null;
+    var el=document.querySelector("#myImage");//获取你想要放大的图片<img>标签id
+	//var START_X = Math.round((window.innerWidth - el.offsetWidth) / 2);//居中
+   // var  START_Y = Math.round((window.innerHeight - el.offsetHeight) / 2);
+	var START_X =0;//后来发现，出现位置设为0才居中
+	var  START_Y=0;
+    var ticking = false;
+    var transform;
+    var timer;
+    var mc = new Hammer.Manager(el);
+
+    mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
+
+    mc.add(new Hammer.Swipe()).recognizeWith(mc.get('pan'));
+    mc.add(new Hammer.Rotate({ threshold: 0 })).recognizeWith(mc.get('pan'));
+    mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan'), mc.get('rotate')]);
+
+    mc.add(new Hammer.Tap({ event: 'doubletap', taps: 2 }));
+    mc.add(new Hammer.Tap());
+
+    mc.on("panstart panmove", onPan);//拖动事件
+   // mc.on("rotatestart rotatemove", onRotate);//旋转事件
+    mc.on("pinchstart pinchmove", onPinch);//放大缩小事件
+    mc.on("swipe", onSwipe);
+    mc.on("tap", onTap);//单击
+    mc.on("doubletap", onDoubleTap);//双击
+
+    mc.on("hammer.input", function(ev) {
+        if(ev.isFinal) {//判断是否离开，或者事件结束
+            //resetElement();//�1�7�0�8�1�7
+        	START_X=transform.translate.x;//把当前拖动到的坐标赋值给中间变量
+		    START_Y=transform.translate.y;
+        }
+    });
+</script>
+</body>
+</html>
