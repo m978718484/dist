@@ -2,18 +2,33 @@
 <html>
 <head>
 <meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>钜商网</title>
 </head>
 <body>
 <div>
 	<img src="/dist/static/image/purpose.png" id="myImage">
 </div>
+ <script type="text/javascript" src="/dist/static/js/jquery-1.7.2.min.js"></script>
+ <script type="text/javascript" src="/dist/static/js/underscore.js"></script>
  <script type="text/javascript" src="/dist/static/js/pinchzoom.js"></script>
-
 <script type="text/javascript">
-	var el = document.getElementById('myImage');
-	new RTP.PinchZoom(el, {});
+    $(function () {
+        $('div.pinch-zoom').each(function () {
+            new RTP.PinchZoom($(this), {});
+        });
+    })
 </script>
+<style type="text/css">
+	img {
+    width: 100%;
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 1000;
+}
+</style>
 </body>
 </html>
