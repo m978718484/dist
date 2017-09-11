@@ -19,9 +19,8 @@
 
 	var el = document.querySelector("#myImage");
 
-	var START_X = Math.round((window.innerWidth - el.offsetWidth) / 2);
-	var START_Y = Math.round((window.innerHeight - el.offsetHeight) / 2);
-
+	var START_X = 0;//Math.round((window.innerWidth - el.offsetWidth) / 2);
+	var START_Y = 0;//Math.round((window.innerHeight - el.offsetHeight) / 2);
 	var ticking = false;
 	var transform; //图像效果
 	var timer;
@@ -100,9 +99,9 @@
 	  }
 
 	  //旋转结束 记录当前图片角度 
-	  if(ev.type =='rotateend'){
-	  initAngle = transform.angle;
-	  } 
+	  // if(ev.type =='rotateend'){
+	  // 	initAngle = transform.angle;
+	  // } 
 	}
 
 
@@ -148,5 +147,16 @@
 
 	 
 </script>
+<style type="text/css">
+	img {
+    width: 100%;
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 1000;
+}
+</style>
 </body>
 </html>
