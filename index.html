@@ -1,162 +1,112 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1">
-<title>钜商网</title>
+  <title>vue+chart</title>
+  <meta name=viewport content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <script src="./static/js/echarts.js"></script>
+  <script src="./static/js/vue.js"></script>
+  <style>
+    .button{
+      float:left;
+      width:150px;
+      height:60px;
+      color:#CC3333;
+      border:2px solid #CC3333;
+      background-color:#3399CC;
+      line-height:60px;
+      text-align:center;
+      font-size:36px;
+    }
+    .button:hover{
+      float:left;
+      width:150px;
+      height:60px;
+      color:#3399CC;
+      border:2px solid #3399CC;
+      background-color:#CC3333;
+      line-height:60px;
+      text-align:center;
+      font-size:36px;
+    }
+  
+    .chart{
+      margin:0 auto;
+    }
+    #but{
+      width:310px;
+      margin:0 auto;
+    }
+  </style>
+
 </head>
+
 <body>
-<div>
-	<img src="/dist/static/image/purpose.png" id="myImage">
-</div>
-<script type=text/javascript src=/dist/static/js/hammer.min.js></script>
-<script type="text/javascript">
-	var reqAnimationFrame = (function () {
-	  return window[Hammer.prefixed(window, 'requestAnimationFrame')] || function (callback) {
-	    window.setTimeout(callback, 1000 / 60);
-	  };
-	})();
+  <div id="app">
+    <div id="panel">
+      <div class="chart" id="main" style="width:300px;height:300px"></div>
+    </div>
+    <div id="but">
+      <div id="add" class="button" @click="add">放大</div>
+      <div id="reduce" class="button" @click="reduce">缩小</div>
+    </div>
+  </div>
 
-	var el = document.querySelector("#myImage");
+  <script type="text/javascript">
+  	var vm=new Vue({
+        el:"#app",
+        data:{
+          size:300,
+        },
+         computed: {
+          style: function () {
+           return "width:"+this.width+"px;height:"+this.height+"px"
+          }
+         },
+         methods:{
+            add:function(){
+              if(this.size<900){
+                this.size=this.size+50;}
+                else{
+                this.size=900;
+                }
 
-	var START_X = 0;//Math.round((window.innerWidth - el.offsetWidth) / 2);
-	var START_Y = 0;//Math.round((window.innerHeight - el.offsetHeight) / 2);
-	var ticking = false;
-	var transform; //图像效果
-	var timer;
-	var initAngle = 0; //旋转角度
-	var initScale = 1; //放大倍数
-
-	var mc = new Hammer.Manager(el); //用管理器 可以同时触发旋转 拖拽 移动
-	//var mc = new Hammer(el); //旋转和移动互斥
-	/**
-	ev.srcEvent.type touchstart touchend touchmove
-	ev.deltaX 手势移动位移变量 
-	*/
-	// mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 })); 
-	// mc.add(new Hammer.Rotate({ threshold: 0 })).recognizeWith(mc.get('pan'));
-	// mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan'), mc.get('rotate')]);
-	// //结束时做一些处理
-	// mc.on("hammer.input", function(ev) {
-	//   if(ev.isFinal) {
-	//     console.log(START_X+" "+transform.translate.x +" "+ev.deltaX);
-	//     START_X = transform.translate.x ;
-	//     START_Y = transform.translate.y ;
-	// }
-
-	// });
-	// mc.on("panstart panmove", onPan);
-	// mc.on("rotatestart rotatemove rotateend", onRotate);
-	mc.on("pinchstart pinchmove", onPinch);
-	/**
-	第二次进入拖拽时 delta位移重置
-	移动时 初始位置startxy不动。delta增加
-	*/
-	function onPan(ev){
-	  if(!ev.isFinal) {
-	    el.className = '';
-	    console.log(START_X +" "+ START_Y +" | "+ev.deltaX +" "+ ev.deltaY); 
-	   transform.translate = {
-	     x: START_X + ev.deltaX,
-	     y: START_Y + ev.deltaY
-	   };
-	   requestElementUpdate();
-	  } 
-	}
-
-	function onPinch(ev){
-	  if(ev.type == 'pinchstart') {
-	    initScale = transform.scale || 1;
-	  }
-	  el.className = '';
-	  transform.scale = initScale * ev.scale;
-	  requestElementUpdate(); 
-	}
-
-	//旋转相关
-	var preAngle =0 ;
-	var tempAngleFlag=0;
-	var deltaAngle = 0; 
-	var startRotateAngle = 0;
-
-	function onRotate(ev) {
-	  //点下第二个触控点时触发
-	  if(ev.type == 'rotatestart') { 
-	    startRotateAngle = ev.rotation ; 
-	    tempAngleFlag = 0 ;
-	  } 
-	  if(ev.type == 'rotatemove'){
-	    if(tempAngleFlag == 0){
-	      preAngle = startRotateAngle;
-	      tempAngleFlag ++;
-	    }else{ 
-	      deltaAngle = ev.rotation - preAngle;
-	      el.className = '';
-	      transform.rz = 1; //非0 垂直xy轴
-	      transform.angle =initAngle + deltaAngle; 
-	      requestElementUpdate(); 
-	    }
-	  }
-
-	  //旋转结束 记录当前图片角度 
-	  // if(ev.type =='rotateend'){
-	  // 	initAngle = transform.angle;
-	  // } 
-	}
-
-
-	function updateElementTransform() {
-	  var value = [
-	'translate3d(' + transform.translate.x + 'px, ' + transform.translate.y + 'px, 0)',
-	'scale(' + transform.scale + ', ' + transform.scale + ')',
-	'rotate3d('+ transform.rx +','+ transform.ry +','+ transform.rz +','+ transform.angle + 'deg)'
-	];
-
-	  value = value.join(" ");
-	  el.style.webkitTransform = value; /*为Chrome/Safari*/
-	  el.style.mozTransform = value; /*为Firefox*/
-	  el.style.transform = value; /*IE Opera?*/
-	  ticking = false;
-	}
-
-	function requestElementUpdate() {
-	  if(!ticking) {
-	    reqAnimationFrame(updateElementTransform);
-	    ticking = true;
-	  }
-	}
-
-	/**
-	初始化设置
-	*/
-	function resetElement() {
-
-	  el.className = 'animate';
-	  transform = {
-	    translate: { x: START_X, y: START_Y },
-	    scale: 1,
-	    angle: 0,
-	    rx: 0,
-	    ry: 0,
-	    rz: 0
-	  };
-	  requestElementUpdate();
-	}
-
-	resetElement();
-
-	 
-</script>
-<style type="text/css">
-	img {
-    width: 100%;
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: auto;
-    z-index: 1000;
-}
-</style>
+              },
+            reduce:function(){
+              if(this.size>300){
+              this.size=this.size-50;}
+              else{
+              this.size=300;
+              }
+            }
+         }
+      })
+    var myChart = echarts.init(document.getElementById('main'));
+    var option = {
+      title: {
+        text: 'ECharts 入门'
+      },
+      tooltip: {},
+      legend: {
+        data:['销量']
+      },
+      xAxis: {
+        data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+      },
+      yAxis: {},
+      series: [{
+        name: '销量',
+        type: 'bar',
+        data: [5, 20, 36, 10, 10, 20]
+      }]
+    };
+    myChart.setOption(option);
+      // 基于准备好的dom，初始化echarts实例
+    vm.$watch("size",function(newVal, oldVal){
+      var dom=document.getElementById('panel')
+      dom.innerHTML='<div class="chart" id="main" style="width:'+newVal+'px;height:'+newVal+'px"></div>';
+      var myChart = echarts.init(document.getElementById('main'));
+      myChart.setOption(option);
+    })
+  </script>
 </body>
 </html>
