@@ -43,7 +43,9 @@
 <body>
   <div id="app">
     <div id="panel">
-      <div class="chart" id="main" style="width:300px;height:300px"></div>
+      <div class="chart" id="main" style="width:300px;height:300px">
+		<img src="./static/image/purpose.png" style="width: 100%;" id="myImage">
+      </div>
     </div>
     <div id="but">
       <div id="add" class="button" @click="add">放大</div>
@@ -80,32 +82,32 @@
             }
          }
       })
-    var myChart = echarts.init(document.getElementById('main'));
-    var option = {
-      title: {
-        text: 'ECharts 入门'
-      },
-      tooltip: {},
-      legend: {
-        data:['销量']
-      },
-      xAxis: {
-        data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-      },
-      yAxis: {},
-      series: [{
-        name: '销量',
-        type: 'bar',
-        data: [5, 20, 36, 10, 10, 20]
-      }]
-    };
-    myChart.setOption(option);
+    // var myChart = echarts.init(document.getElementById('main'));
+    // var option = {
+    //   title: {
+    //     text: 'ECharts 入门'
+    //   },
+    //   tooltip: {},
+    //   legend: {
+    //     data:['销量']
+    //   },
+    //   xAxis: {
+    //     data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+    //   },
+    //   yAxis: {},
+    //   series: [{
+    //     name: '销量',
+    //     type: 'bar',
+    //     data: [5, 20, 36, 10, 10, 20]
+    //   }]
+    // };
+    // myChart.setOption(option);
       // 基于准备好的dom，初始化echarts实例
     vm.$watch("size",function(newVal, oldVal){
       var dom=document.getElementById('panel')
-      dom.innerHTML='<div class="chart" id="main" style="width:'+newVal+'px;height:'+newVal+'px"></div>';
-      var myChart = echarts.init(document.getElementById('main'));
-      myChart.setOption(option);
+      dom.innerHTML='<div class="chart" id="main" style="width:'+newVal+'px;height:'+newVal+'px"><img src="./static/image/purpose.png" id="myImage" style="width: 110%;"></div>';
+      // var myChart = echarts.init(document.getElementById('main'));
+      // myChart.setOption(option);
     })
   </script>
 </body>
